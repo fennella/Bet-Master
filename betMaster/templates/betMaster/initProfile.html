@@ -1,0 +1,31 @@
+{% extends "betMaster/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<br><br><br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-9 text-center" height:100%>
+            <br><br>
+            <h1>Transfer bitcoin to your wallet to get started</h1><br>
+            <h2>Wallet Address:</h2><br>
+            <img src="" alt="qrCode" id="initQRCodeImg" class="qrCodeImg"><br><br>
+            <h2>{{ request.session.btcAddress }}</h2><br>
+            <button class="btn btn-primary"><a id="toIndexBtn" href="{% url 'index' %}"><strong>Skip for now, I want to look at the lines</strong></a></button>
+            <br><br>
+            <div class="text-right">
+                Need Help? <a href="https://support.coinbase.com/customer/en/portal/articles/971437-how-do-i-send-digital-currency-to-another-wallet-" target="_blank">Check out this link</a>
+            </div>
+        </div>
+        <div id="sidebar" class="col-3" height:100%>
+            <img id="flowImg" src="{% static 'betMaster/img/flow.png' %}" alt="flowDiagram">
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+</body>
+</html>

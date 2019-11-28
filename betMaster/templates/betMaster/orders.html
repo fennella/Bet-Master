@@ -1,0 +1,202 @@
+{% extends "betMaster/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+
+<div class="container-fluid">
+    <div class="row">
+            
+        <div class="col-md-7" id="accountLeft">
+                <br><br><br><br><br>
+            <h1>Account History</h1><hr><br>
+            <h3>Pending Bets</h4><b3>
+            <table class="table myTblFormat">
+                <thead>
+                    <tr>
+                        <th style="display:none;">Game ID</th>
+                        <th>Date</th>
+                        <th>Game</th>
+                        <th>Pick</th>
+                        <th>Amount</th>
+            
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if pendingOrders|length > 0 %}
+                        {% for pendingBet in pendingOrders %}
+                            <tr>
+                                <td style="display:none;">
+                                    {{ pendingBet.gameID }}
+                                </td>
+                                <td class="pendOrderCell">
+                                    {{ pendingBet.date }}
+                                </td>
+                                <td class="pendOrderCell">
+                                    {{ pendingBet.gameSelection }}
+                                </td>
+                                <td class="pendOrderCell">
+                                    {{ pendingBet.teamName}} ({{ pendingBet.spreadChoice }})
+                                </td>
+                                <td class="pendOrderCell">
+                                    {{ pendingBet.gameAmount }}
+                                </td>
+                                
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6">
+                                <h4 style="color:white !important; text-align:center;">No Bets Found</h4>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <br><br><h3>Matched Bets</h3><br>
+            <table class="table myTblFormat">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Game</th>
+                        <th>Pick</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if incompleteBets|length > 0 %}
+                        {% for incompleteBet in incompleteBets %}
+                            <tr>
+                                <td>
+                                    {{ incompleteBet.date }}
+                                </td>
+                                <td>
+                                    {{ incompleteBet.gameSelection }}
+                                </td>
+                                <td>
+                                    {{ incompleteBet.teamName}} ({{ incompleteBet.spreadChoice }})
+                                </td>
+                                <td>
+                                    {{ incompleteBet.amount }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4">
+                                <h4 style="color:white !important; text-align:center;">No Bets Found</h4>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            <br><br><h3>Completed Bets</h3><br>
+            <table class="table myTblFormat">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Game</th>
+                        <th>Pick</th>
+                        <th>Result</th>
+                        <th>Profit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if completeBets|length > 0 %}
+                        {% for completeBet in completeBets %}
+                            <tr>
+                                <td>
+                                    {{ completeBet.date}}
+                                </td>
+                                <td>
+                                    {{ completeBet.gameSelection }}
+                                </td>
+                                <td>
+                                    {{ completeBet.teamName }} ({{ completeBet.spreadChoice}})
+                                </td>
+                            {% if completeBet.didWin == "Win" %}
+                                
+                                <td style="color: #18d26e !important">
+                                    {{ completeBet.didWin }}
+                                </td>
+                                <td style="color: #18d26e !important">
+                                    {{ completeBet.payout}}
+                                </td>
+                            </tr>
+                            {% else %}
+                                <td style="color:#ff7d7d !important;">
+                                    {{ completeBet.didWin }}
+                                </td>
+                                <td style="color:#ff7d7d !important;">
+                                    {{ completeBet.payout}}
+                                </td>
+                            </tr>
+                            {% endif %} 
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5">
+                                <h4 style="color:white !important; text-align:center;">No Bets Found</h4>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+
+        </div>
+        <div class="col-md-5" id="accountRight">
+                <br><br><br><br><br>
+            <h1>Metrics</h1>
+            <hr>
+            <ul>
+                <li>
+                    <h5><strong>Total Bets: </strong>{{ performanceData.totalBets }}</h5>
+                </li>
+                <li>
+                    <h5><strong>Total Amount Bet: </strong>{{ performanceData.totalBetAmount }}</h5>
+                </li>
+                <li>
+                    <h5><strong>Total Income: </strong>{{ performanceData.totalWinAmount }}</h5>
+                </li>
+                <li>
+                    <h5><strong>Total Loss Amount: </strong>{{ performanceData.totalLossAmount }}</h5>
+                </li>
+                <li>
+                    <h5><strong>Total Profit: </strong>{{ performanceData.currProfit }}</h5>
+                </li>
+            </ul>
+            
+            
+            
+            
+            <h3>Profit History</h3>
+            <hr>
+            <canvas id="profitHistory" width="1" height="1"></canvas><br><br>
+
+            <h3>Win Percentage History</h3>
+            <hr>
+            <canvas id="winPercHistory" width="1" height="1"></canvas><br><br>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    
+    var winPercHistory = {{ performanceData.winPercHistory }};
+    var profitTotals = {{ performanceData.profitHistory }};
+    var matchArr = Object.keys(profitTotals).map(Number);
+    
+    
+    console.log(profitTotals);
+    console.log(matchArr);
+    
+    
+</script>
+<script src="{% static 'betMaster/js/profitHistory.js' %}"></script>
+<script src="{% static 'betMaster/js/winPercHistory.js' %}"></script>
+{% endblock content %}
+
+</body>
+</html>

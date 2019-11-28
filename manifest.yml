@@ -1,0 +1,7 @@
+---
+applications:
+- name: fairBet
+  memory: 512M
+  instances: 1
+  buildpack: python_buildpack
+  command: python manage.py collectstatic --noinput && gunicorn fairBet.wsgi:application 

@@ -1,0 +1,104 @@
+{% extends "betMaster/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-8 text-left">
+            <br><br><br><br><br><br>
+            <div class="row">
+                <div class="col-5">
+                    <h2 id="upcomingHeader" onclick="showUpcoming();"><strong>Upcoming Games</strong></h2>
+                </div>
+                <div class="col-7">
+                    <h2 id="liveHeader" onclick="showLive();"><strong>Live Games</strong></h2>
+                </div>
+            </div>
+             
+            <h2 style="float: right" ><strong></strong></h2>
+            <div id="upcomingDiv">
+                <br>
+                {% for game in upcomingGames %}
+                <table class="upcomingTable">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="spacingCol"></th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                            <th scope="col"><br>Spread</th>
+                            <th scope="col"></thscope></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="firstRow">
+                            <td></td>
+                            <td class="bottomBorder leftBorder rightBorder topBorder timeCell text-center" scope="row" rowspan="2">{{ game.date }}<br>{{ game.time }}</th>
+                            <td class="bottomBorder rightBorder topBorder teamName"> &nbsp; {{ game.awayTeam }}</td>
+                            <td class="leftBorder rightBorder topBorder bottomBorder spreadCell"> &nbsp; {{ game.awayTeamSpread }}</td>
+                            <td rowspan="2"><button id="goToLobbyBtn" class="btn btn-success betBtn" onclick="goToBetLobby('{{ game.gameID }}')">Bet On Game</button></td>
+                        </tr>
+                        <tr class="bottomBorder">
+                            <td></td>
+                            <td class="rightBorder teamName"> &nbsp; {{ game.homeTeam}}</td>
+                            <td class="leftBorder rightBorder spreadCell"> &nbsp; {{ game.homeTeamSpread }}</td>
+                        </tr>
+                        <tr>
+                            <td><br></td>
+                            <td><br></td>
+                            <td><br></td>
+                            <td><br></td>
+                            <td><br></td>
+                        </tr>
+                    </tbody>
+                </table>   
+                <br>
+                {% endfor %}   
+            </div>
+            <div id="liveDiv" style="display:none;">
+                <br>
+                <h4>Live Betting Feature Coming Soon! </h4>
+            </div>
+            
+        </div>
+        <div class="col-4 text-left sidebar">
+            <br><br><br><br><br><br>
+            <h2><strong>Largest Paired Bets</strong></h2>
+            <table class="table myTblFormat" id="largestBetsTable">
+                <thead>
+                    <tr>
+                        <th>
+                            Betters
+                        </th>
+                        <th>
+                            Game
+                        </th>
+                        <th>
+                            Amount
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bet in largestBets %}
+                    <tr>
+                        <td>
+                            {{ bet.better1 }} vs {{ bet.better2 }}
+                        </td>
+                        <td>
+                            {{ bet.better1TeamName }} vs {{ bet.better2TeamName }} ({{ bet.better1Spread }})
+                        </td>
+                        <td>
+                            {{ bet.amount }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<html  lang="en">
+<head>
+<link  rel="stylesheet"  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"  crossorigin="anonymous">
+<title>Fair Bet</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+<!-- Favicons -->
+
+  <!-- <link href="{% static 'accounts/img/logo.PNG' %}" rel="icon">
+  <link href="{% static 'accounts/img/apple-touch-icon.png' %}" rel="apple-touch-icon"> -->
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
+
+  <!-- Bootstrap CSS File -->
+  <link href="{% static 'betMaster/lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Libraries CSS Files -->
+  <link href="{% static 'betMaster/lib/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+  <link href="{% static 'betMaster/lib/animate/animate.min.css' %}" rel="stylesheet">
+  <link href="{% static 'betMaster/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'betMaster/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+  <link href="{% static 'betMaster/lib/lightbox/css/lightbox.min.css' %}" rel="stylesheet">
+
+  <!-- JavaScript -->
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/alertify.min.js"></script>
+
+<!-- CSS -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/css/alertify.min.css"/>
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/css/themes/default.min.css"/>
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/css/themes/semantic.min.css"/>
+<!-- Bootstrap theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.12.0/build/css/themes/bootstrap.min.css"/>
+
+  <!-- Main Stylesheet File -->
+  <link href="{% static 'betMaster/css/style.css' %}" rel="stylesheet">
+  <script type="text/javascript">
+    var qrBinary = "{{ request.session.qrCodeBinary }}";
+    var betRoomNum = {{ betRoomNumJSON }};
+    var conversionRate = "{{ request.session.conversionRate }}";
+    var btcBalance = "{{ request.session.balance }}";
+    var btcAddress = "{{ request.session.btcAddress }}";
+    var test = "{{ textData }}";
+    console.log(test);
+    
+</script>
+
+<script src="{% static 'betMaster/js/websocket.js' %}"></script>
+
+
+</head>
+
+<body onload="initPage(qrBinary); calcMaxBet(conversionRate, btcBalance);">
+
+  <header id="header">
+      
+    <div class="container-fluid">
+        
+      <div id="logo" class="pull-left">
+        <h1><a href="{% url 'index' %}" class="scrollto">Bet Master</a></h1>
+
+      </div>
+
+      <nav id="nav-menu-container">
+        <ul class="nav-menu">
+          <li class="menu-active"><a href="{% url 'index' %}">Betting Lines</a></li>
+          <li class="menu-has-children"><a id="accountHeader" href="#">Account</a><p id="balanceNotifier" class="balance"><ion-icon id="headerBalanceIcon" name="logo-bitcoin"></ion-icon>{{ request.session.balance }}</p>
+            <ul id="accountInfoDiv">
+              <div class="container">
+                <div class="row accountInfo">
+                  <div class="col-4">
+                      <img id="profPic" src="{% static 'betMaster/img/stock.png' %}" alt="stock">
+                  </div>
+                  <div class="col-8 text-center">
+                      <h5 id="usernameID">{{ request.session.username }}</h5>
+                      <br>
+                      <h3 id="balanceHeader" class="balance" id="usdBalance"><ion-icon id="btcLogo" name="logo-bitcoin"></ion-icon>{{ request.session.balance }}</h3>
+                  </div>
+                </div>
+                <br>
+                <hr>
+                <div class="row accountInfo">
+                  <div class="col text-center" id="walletDiv">
+                    <br> <h5 id="walletAddress">Wallet Address:</h5><br>
+                    <img src="" alt="qrCode" id="qrCode" class="qrCodeImg"> <br><br>
+                    <p id="walletChars">{{ request.session.btcAddress }}</p>
+                    <br><hr><br>
+                    <h5 id="apiKeyHeader">Api Key:</h5><br>
+                    <p id="apiKeyChars">{{ request.session.apiKey }}</p>
+                    <br><hr>
+                  </div>
+                  <div class="col text-center">
+                      <br>
+                      <button id="withdrawBtn" class="btn btn-success"><strong>Withdraw</strong></button>
+                      <br><br>
+                  </div>
+                </div>
+                
+                  
+              </div>
+            </ul>
+          </li>
+          <li><a href="{% url 'orders' %}">Orders</a></li>
+          <li><a href="#">Logout</a></li>
+        </ul>
+      </nav><!-- #nav-menu-container -->
+    </div>
+  </header><!-- #header -->
+
+
+      {% block content %}
+      {% endblock %}
+<br><br>
+    <div class="container">
+      <div class="copyright" style="text-align:center;">
+        &copy; Copyright <strong>Bet Master Inc.</strong> All Rights Reserved
+      </div>
+
+    </div>
+
+
+  </footer><!-- #footer -->
+
+  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+  <!-- Uncomment below i you want to use a preloader -->
+  <!-- <div id="preloader"></div> -->
+
+  <br><br>
+
+  <!-- JavaScript Libraries -->
+  <script src="{% static 'betMaster/lib/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/jquery/jquery-migrate.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/easing/easing.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/superfish/hoverIntent.js' %}"></script>
+  <script src="{% static 'betMaster/lib/superfish/superfish.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/wow/wow.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/waypoints/waypoints.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/counterup/counterup.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/isotope/isotope.pkgd.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/lightbox/js/lightbox.min.js' %}"></script>
+  <script src="{% static 'betMaster/lib/touchSwipe/jquery.touchSwipe.min.js' %}"></script>
+
+
+  <!-- Template Main Javascript File -->
+  <script src="{% static 'betMaster/js/main.js' %}"></script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <script src="https://unpkg.com/ionicons@4.4.4/dist/ionicons.js"></script>
+
+  <script src="{% static 'betMaster/js/betPage.js' %}"></script>
+{% block javascript %}{% endblock %}

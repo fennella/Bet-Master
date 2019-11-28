@@ -1,0 +1,366 @@
+{% extends "betMaster/base2.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<br><br><br>
+<p id="baseSpreadHolder" style="display:none;"></p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-9 text-center">
+            <h2 id="gameTitleHeader">{{ gameData.awayTeam }} at {{ gameData.homeTeam }}</h2><br>
+            <div class="row">
+                <div class="col text-center">
+                    <img class="teamLogoImg" id="awayLogo" src="{% static 'betMaster/img/'|add:gameData.awayPicPath %}" alt="awayTeamImg">
+                </div>
+                <div class="col text-center">
+                    <img class="teamLogoImg" id="homeLogo" src="{% static 'betMaster/img/'|add:gameData.homePicPath %}" alt="homeTeamImg">
+                </div>
+            </div>
+            
+            <h3 id="selectedSpread">{{ gameData.evenSpread }}</h3><br>
+            <div class="slidecontainer">
+                <input type="range" min="0" max="100" value="50" step="0.5" class="slider" id="myRange"><br><br>
+            </div>
+            <div class="row">
+                <div class="col text-center" id="awayTableHolder">
+                    <h5 id="awayTeamHeader"></h5><br>
+                    <table class="table" id="minus2AwayTable">
+                            <thead>
+                                <th>
+                                    Better
+                                </th>
+                                <th class="amountTH">
+                                    Amount
+                                </th>
+                                <th>&nbsp;</th>
+                                    
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <table class="table" id="minus15AwayTable">
+                                <thead>
+                                    <th>
+                                        Better
+                                    </th>
+                                    <th class="amountTH">
+                                        Amount
+                                    </th>
+                                    <th>&nbsp;</th>
+                                        
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                    <table class="table" id="minus1AwayTable">
+                            <thead>
+                                <th>
+                                    Better
+                                </th>
+                                <th class="amountTH">
+                                    Amount
+                                </th>
+                                <th>&nbsp;</th>
+                                
+                                   
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <table class="table" id="minus05AwayTable">
+                                <thead>
+                                    <th>
+                                        Better
+                                    </th>
+                                    <th class="amountTH">
+                                        Amount
+                                    </th>
+                                    <th>&nbsp;</th>
+                                    
+                                       
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        <table class="table" id="evenAwayTable">
+                                <thead>
+                                    <th>
+                                        Better
+                                    </th>
+                                    <th class="amountTH">
+                                        Amount
+                                    </th>
+                                    <th>&nbsp;</th>
+                                    
+                                 
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <table class="table" id="plus05AwayTable">
+                                    <thead>
+                                        <th>
+                                            Better
+                                        </th>
+                                        <th class="amountTH">
+                                            Amount
+                                        </th>
+                                        <th>&nbsp;</th>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            <table class="table" id="plus1AwayTable">
+                                    <thead>
+                                        <th>
+                                            Better
+                                        </th>
+                                        <th class="amountTH">
+                                            Amount
+                                        </th>
+                                        <th>&nbsp;</th>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <table class="table" id="plus15AwayTable">
+                                        <thead>
+                                            <th>
+                                                Better
+                                            </th>
+                                            <th class="amountTH">
+                                                Amount
+                                            </th>
+                                            <th>&nbsp;</th>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                    <table class="table" id="plus2AwayTable">
+                            <thead>
+                                <th>
+                                    Better
+                                </th>
+                                <th class="amountTH">
+                                    Amount
+                                </th>
+                                <th>&nbsp;</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                                 
+                </div>
+                <div class="col text-center" id="homeTableHolder">
+                    <h5 id="homeTeamHeader"></h5><br>
+                    <table class="table" id="minus2HomeTable">
+                            <thead>
+                                <th>
+                                    Better
+                                </th>
+                                <th class="amountTH">
+                                    Amount
+                                </th>
+                                <th>&nbsp;</th>
+                                
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <table class="table" id="minus15HomeTable">
+                                <thead>
+                                    <th>
+                                        Better
+                                    </th>
+                                    <th class="amountTH">
+                                        Amount
+                                    </th>
+                                    <th>&nbsp;</th>
+                                    
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        <table class="table" id="minus1HomeTable">
+                                <thead>
+                                    <th>
+                                        Better
+                                    </th>
+                                    <th class="amountTH">
+                                        Amount
+                                    </th>
+                                    <th>&nbsp;</th>
+                                    
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <table class="table" id="minus05HomeTable">
+                                    <thead>
+                                        <th>
+                                            Better
+                                        </th>
+                                        <th class="amountTH">
+                                            Amount
+                                        </th>
+                                        <th>&nbsp;</th>
+                                        
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            <table class="table betRoomTbl" id="evenHomeTable">
+                                    <thead>
+                                        <th>
+                                            Better
+                                        </th>
+                                        <th class="amountTH">
+                                            Amount
+                                        </th>
+                                        <th>&nbsp;</th>
+                                        
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <table class="table" id="plus05HomeTable">
+                                        <thead>
+                                            <th>
+                                                Better
+                                            </th>
+                                            <th class="amountTH">
+                                                Amount
+                                            </th>
+                                            <th>&nbsp;</th>
+                                            
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>     
+                                <table class="table" id="plus1HomeTable">
+                                        <thead>
+                                            <th>
+                                                Better
+                                            </th>
+                                            <th class="amountTH">
+                                                Amount
+                                            </th>
+                                            <th>&nbsp;</th>
+                                            
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>   
+                                    <table class="table" id="plus15HomeTable">
+                                            <thead>
+                                                <th>
+                                                    Better
+                                                </th>
+                                                <th class="amountTH">
+                                                    Amount
+                                                </th>
+                                                <th>&nbsp;</th>
+                                                
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>               
+                                        <table class="table" id="plus2HomeTable">
+                                                <thead>
+                                                    <th>
+                                                        Better
+                                                    </th>
+                                                    <th class="amountTH">
+                                                        Amount
+                                                    </th>
+                                                    <th>&nbsp;</th>
+                                                    
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+     
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 text-left sidebar" id="betPageSidebar">
+            
+                <h2><strong>Bet Slip</strong></h2><br>
+                <h4><strong>Choice:</strong></h4>
+                <select id="betSelect" onchange="updateBetSelection()">
+                    <option value="">{{ gameData.awayTeam }}</option>
+                    <option value="">{{ gameData.homeTeam }}</option>
+                </select><br><br><hr>
+                <h4><strong>Spread</strong></h4>
+                <h5 id="spreadInfo"></h5><hr>
+                <h4><strong>Amount</strong></h4>
+                <div class="row">
+                    <div class="col text-center">
+                        <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input id="usdInput" value="" onkeyup="convertToBtc('{{ request.session.conversionRate }}')" type="number" class="form-control">
+                        </div>
+                        
+                        <p id="maxBet"></p>
+                    </div>
+                    <div class="col text-left">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <ion-icon name="logo-bitcoin"></ion-icon>
+                                </span>
+                            </div>
+                            <input id="btcConversion" value="0.0" type="number" class="form-control" readonly>
+                        </div>
+                    </div>
+                </div>
+                <p id="errorMessage"></p>
+                <hr>
+                <h4><strong>Payout</strong></h4>
+                <div class="row">
+                    <div class="col text-center">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    $
+                                </span>
+                            </div>
+                            <input id="usdPayout" type="number" class="form-control" value="0.00" readonly>
+                        </div>
+                        
+                    </div>
+                    <div class="col text-center">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <ion-icon name="logo-bitcoin"></ion-icon>
+                                </span>
+                            </div>
+                            <input id="btcPayout" type="number" class="form-control" value="0.00" readonly>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            
+            <div class="text-center">
+                    <button disabled="true" class="btn btn-success" onclick="placeBet('{{ request.session.username }}');" id="placeBetBtn">Place Bet</button>
+            </div>
+                
+
+        </div>
+    </div>
+    
+    
+</div>
+
+
+
+{% endblock content %}
+
+
+
+</body>
+
+</html>
