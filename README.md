@@ -6,7 +6,7 @@ Bet Master is a peer-to-peer sports betting website using bitcoin. Bet Master wa
 
 1) Have Python 3 installed and referenced in your machine's path
 2) Install and begin running Docker Desktop: If you don't already have it installed, visit [here](https://www.docker.com/products/docker-desktop) for download instructions
-3) After cloning this repo, to install all of the Python packages required to run this application first create a virtual environment. To install the virtualenv Python package use the command in the parent directory:
+3) After cloning this repo, to install all of the Python packages required to run this application first create a virtual environment. To install the virtualenv Python package use the command:
 
 ```bash
 pip3 install virtualenv
