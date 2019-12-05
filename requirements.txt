@@ -1,5 +1,4 @@
 django==2.2.5
-gunicorn==19.7.1
 django-crispy-forms==1.8.0
 dj-database-url==0.5.0
 whitenoise==4.1.4
@@ -7,3 +6,14 @@ pywallet==0.1.0
 Pillow==6.1.0
 qrcode==6.1
 bit==0.6.0
+django-crispy-forms==1.8.0
+django-jsonify==0.3.0
+bitcoin==1.1.42
+bitcoinlib==0.4.10
+channels==2.3.1
+channels-redis==2.4.1
+pandas==0.25.1
+psycopg2-binary==2.8.3
+pywallet==0.1.0
+qrcode==6.1
+asgiref==3.2.3
