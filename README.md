@@ -1,6 +1,6 @@
 # Bet Master
 
-Bet Master is a peer-to-peer sports betting website using bitcoin. Bet Master was created for my final project for SE 575 (Software Design) 
+Bet Master is a peer-to-peer sports betting website using bitcoin. Bet Master was created for my final project for SE 575 (Software Design).     
 View a demo of Bet Master in action [here](https://www.youtube.com/watch?v=458_B6tSpz8)
 
 ## Installation
