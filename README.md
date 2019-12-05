@@ -19,7 +19,7 @@ virtualenv myenv
 ```bash
 source myenv/bin/activate
 ```
-6) Now that the virtual environment is created and running in your directory, cd into the repos first child directory (where requirements.txt is located). Now the required python packages to run this application need to be installed. To do this run the command:
+6) Now that the virtual environment is created and running in your directory, cd into the repo (where requirements.txt is located). Now the required python packages to run this application need to be installed. To do this run the command:
 ```bash
 pip3 install -r requirements.txt
 ```
