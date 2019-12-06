@@ -9,6 +9,7 @@ from django.db.models import Sum
 import time
 import math
 
+## Web socket consumer for bet page
 class BetConsumer(WebsocketConsumer):
 
     def connect(self):
@@ -23,6 +24,7 @@ class BetConsumer(WebsocketConsumer):
         )
         self.accept()
         
+        ## Get Data to init bet room
         game = FootballGame.objects.get(gameID=self.betRoomNum)
         bets = PendingBet.objects.filter(gameID=game.gameID).order_by('timestamp')
         pendingBets = []
@@ -65,7 +67,6 @@ class BetConsumer(WebsocketConsumer):
         ## Insufficient funds
         if float(btcBalance) < float(betRequest["amount"]):
             ## Handle not enough money in account
-            print("Not enough money in account")
             self.send(text_data=json.dumps({
             # Send message back here
             'message':'Insufficient Funds'
@@ -77,7 +78,8 @@ class BetConsumer(WebsocketConsumer):
         else:
             matchTeam = "home"
 
-            
+        
+        ## Set game information to handle bet
         betSpreadChoice = float(betRequest['spread'])
         spreadRequest = float(betSpreadChoice * -1)
         aggSum = PendingBet.objects.filter(gameID=betRequest['gameID'], pick=matchTeam, spreadChoice=spreadRequest).aggregate(Sum('amount'))
@@ -87,7 +89,6 @@ class BetConsumer(WebsocketConsumer):
         spreadOffEven = (abs(float(betRequest['spread'])) - referringGame.evenSpread)
 
         ## Send bet amount to master for holding
-        print(f'Sending {float(betRequest["amount"])} to master from {user.username}')
         sendBtcToMaster(user.btcKey, float(betRequest["amount"]))
 
         if aggSum['amount__sum'] is None:
@@ -95,7 +96,7 @@ class BetConsumer(WebsocketConsumer):
             
             payout = round(float(betRequest['amount']) * 1.98, 10)
             
-            print(f'Creating pending bet for {betRequest["username"]} for {betRequest["amount"]}')
+            # Create a pending bet
             pendingBet = PendingBet(betterUsername=betRequest['username'],
                                     betterAddress=user.btcAddress,
                                     pick=betRequest['homeOrAway'],
@@ -108,10 +109,8 @@ class BetConsumer(WebsocketConsumer):
                                     payout=payout)
             pendingBet.save()
 
-            ## ACTUALLY SEND BITCOIN ##
-            ## COMMNENT OUT FOR TESTING ##
-            # print(f'Sending {round(float(betRequest["amount"]), 10)} to master from {user.username}')
-            # sendBtcToMaster(user.btcKey, round(float(betRequest['amount']), 10))
+
+            ## Update user balance
             user.balance = float(user.balance) - round(float(betRequest['amount']), 10)
             user.save()
     
@@ -143,7 +142,8 @@ class BetConsumer(WebsocketConsumer):
                 if betRequestAmount >= bet.amount:
                     ## Fulfill bet request
                     payout = round(float(betRequestAmount) * 1.98, 10)
-                    print(f'Creating a matched bet between {user.username} and {bet.betterUsername} for {bet.amount}')
+
+                    # Create new matched bet
                     matchedBet = MatchedBet(better1=user.username, 
                                             better1Address=user.btcAddress, 
                                             better2=bet.betterUsername, 
@@ -158,9 +158,6 @@ class BetConsumer(WebsocketConsumer):
                                             gameID=betRequest['gameID'], 
                                             payOutAmount=payout)
                     matchedBet.save()
-
-                    # print(f'Matching a bet: Sending {bet.amount} btc to master from {user.username}')
-                    # sendBtcToMaster(user.btcKey, bet.amount)
 
                     cleanNewBalance = round(user.balance - betRequestAmount, 10)
                     user.balance = cleanNewBalance
@@ -188,11 +185,12 @@ class BetConsumer(WebsocketConsumer):
                     bet.delete()
 
                 
+                ## Fill partial bet amount and break
                 elif betRequestAmount < float(bet.amount) and betRequestAmount > 0:
-                    print("Filling partial amount")
-                    ## Fill partial bet and break
                     outstandingBetAmount = round(bet.amount - betRequestAmount, 10)
                     payout = round(float(outstandingBetAmount) * 1.98, 10)
+
+                    ## Create new matched bet
                     matchedBet = MatchedBet(better1=user.username, 
                                             better1Address=user.btcAddress, 
                                             better2=bet.betterUsername, 
@@ -206,16 +204,13 @@ class BetConsumer(WebsocketConsumer):
                                             amount=betRequestAmount, 
                                             gameID=betRequest['gameID'], 
                                             payOutAmount=payout)
-                    print(f'Creating matched bet between {user.username} and {bet.betterUsername} for {betRequestAmount}')
                     matchedBet.save()
-                    ## Alert for partial matched bet
 
-                    print(f'Updating pending bet amount from {bet.amount} to {outstandingBetAmount}')
+                    ## Update pending bet to outstanding amount still left
                     bet.amount = outstandingBetAmount
                     bet.save()
 
-                    # print(f'Filling partial amount: Sending {betRequestAmount} btc to master from {user.username}')
-                    # sendBtcToMaster(user.btcKey, betRequestAmount)
+                    ## Update user balance
                     newBtcBalance = user.balance - betRequestAmount
                     cleanNewBalance = round(user.balance - betRequestAmount, 10)
                     user.balance = newBtcBalance
@@ -240,20 +235,15 @@ class BetConsumer(WebsocketConsumer):
                         }
                     )
                     betRequestAmount = 0
-                    
+            
+            ## No more bets to be matched with, create new pending bet
             if betRequestAmount > 0:
-                print("Cleared all opposite bets, add entry")
                 payout = round(float(betRequestAmount) * 1.98, 10)
-                print(f'Creating pending bet for {betRequest["username"]} for {betRequestAmount}')
                 pendingBet = PendingBet(betterUsername=betRequest['username'],betterAddress=user.btcAddress,pick=betRequest['homeOrAway'],teamName=betRequest['teamName'],spreadChoice=betRequest['spread'],spreadOffEven=spreadOffEven,gameID=gameID,timestamp=currentTime,amount=betRequestAmount,payout=payout)
                 pendingBet.save()
                 betToSend = PendingBet.objects.get(timestamp=currentTime, betterUsername=betRequest['username'])
                 betID = betToSend.id
                 remainder = round(float(betRequestAmount), 10)
-
-
-                # print(f'Cleared all opposite bets: Sending {betRequestAmount} to master from {user.username}')
-                # sendBtcToMaster(user.btcKey, betRequestAmount)
 
                 async_to_sync(self.channel_layer.group_send)(
                     self.roomGroupName,

@@ -12,10 +12,6 @@ function deleteBet(betInfo) {
             'spread': spread,
             'gameID': gameID
         },
-        success : function(data) {    
-            // Remove from UI          
-            console.log(data);
-        },
         error : function(request,error) {
             console.log(error);
         }

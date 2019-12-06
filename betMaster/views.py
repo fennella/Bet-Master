@@ -12,12 +12,12 @@ from django.utils.safestring import mark_safe
 from websocket import create_connection
 import pandas as pd
 
-# Create your views here.
 def index_view(request):
 
     updateMasterBalance()
     btcBalance = accessBtcBalance(request.session['username']) 
 
+    ## Get data to populate home screen view
     upcomingGames = FootballGame.objects.filter(isLive=False, isComplete=False, awayTeamSpread__lt=999)
 
     largestBets = MatchedBet.objects.order_by('-amount')[:5]
@@ -59,6 +59,7 @@ def updateMasterBalance():
         u.balance = actualBtcBalance
         u.save()
 
+## Get data to init bet room 
 def betRoom(request, betRoomName):
     gameDict = {}
     game = FootballGame.objects.get(gameID=int(betRoomName))
@@ -75,10 +76,10 @@ def betRoom(request, betRoomName):
         'betRoomNumJSON':mark_safe(json.dumps(betRoomName)), 'gameData':gameDict
     })
 
+## API data request
 def nflUpcomingView(request):
 
     try:
-
         apiKey = request.GET['API_KEY']
         if CustomUser.objects.filter(apiKey=apiKey).exists():
             upcomingGames = {"games":[]}
@@ -229,6 +230,7 @@ def createPendingCompleteData(gameDict, game):
 
     return gameDict
 
+## API enpoint to place a bet
 def nflPlaceBetView(request):
 
     try:
@@ -321,6 +323,7 @@ def connectToWebSocket(gameID, user, game, selection, spread, amount, btcPrice):
     ws.send(jsonBetRequest)
     ws.recv()
     
+## Get data for orders page
 def ordersView(request):
 
     user = CustomUser.objects.get(username=request.session['username'])
@@ -336,7 +339,6 @@ def ordersView(request):
     completeData = generateCompleteObjs(allComplete)
     performanceData = getProfitHistoryData(user, btcPrice)
     
-    print(f'Performance Data: {performanceData}')
     return render(request, 'betMaster/orders.html', {'btcBalance':btcBalance, 
                                                     'pendingOrders':pendingOrders, 
                                                     'incompleteBets':incompleteData, 

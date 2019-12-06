@@ -25,8 +25,8 @@ def login_view(request):
 
             u = CustomUser.objects.get(username=username)
             btcBalance = getBtcBalance(u.btcKey)
-            print(f'BTC Balance: {btcBalance}')
-    
+
+            ## Set session variables    
             request.session['username'] = u.username
             request.session['btcAddress'] = u.btcAddress
             request.session['balance'] = btcBalance
@@ -35,15 +35,14 @@ def login_view(request):
             qrBinary = u.qrCodeBinary
             request.session['qrCodeBinary'] = json.dumps(qrBinary.decode("utf-8"))
 
+            ## Find, update and payout games that are not up to date
             oddsApiParse.findUpcomingGames()
             oddsApiParse.checkForCompletedGames()
             oddsApiParse.payoutCompletedGames()
             
-
             return redirect('betMaster/')
         else:
             return render(request, 'accounts/login.html', {'message': 'Invalid Login'})
-
 
     else:
         return render(request, 'accounts/login.html')
@@ -53,7 +52,7 @@ def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            print("Creating new user")
+            ## Create new user
             form.save()
             request.session['username'] = form.cleaned_data.get('username')
             username = form.cleaned_data.get('username')
@@ -70,9 +69,11 @@ def register(request):
             u.qrCodeBinary = qrBinary
             u.apiKey = abs(hash(address))
             u.save()
-
+            
+            ## Log user in
             login(request, user)
 
+            ## Set session variables
             request.session['username'] = u.username
             request.session['btcAddress'] = u.btcAddress
             request.session['balance'] = u.balance
@@ -81,7 +82,6 @@ def register(request):
             qrBinary = u.qrCodeBinary
             request.session['qrCodeBinary'] = json.dumps(qrBinary.decode("utf-8"))
 
-            
             return redirect('betMaster/initProfile')
     else:
 

@@ -2,7 +2,6 @@ function initPage(encodedImg) {
 
     var formattedString = encodedImg.replace(/&quot;/g, "");
     var imgSrc = 'data:image/png;base64,' + formattedString;
-    console.log(imgSrc);
     document.getElementById("qrCode").src = imgSrc;
     try {
         document.getElementById("initQRCodeImg").src = imgSrc;
@@ -13,7 +12,6 @@ function initPage(encodedImg) {
 }
 
 function calcMaxBet(conversionRate, balance) {
-    console.log("Calculating max bet");
     var maxUsdBet = ((conversionRate * balance) - 1).toFixed(2);
     if (maxUsdBet < 0) {
         maxUsdBet = 0.00;
@@ -37,14 +35,12 @@ function convertToBtc(rate) {
     var maxFloat = parseFloat(maxBet);
     
     if (usdAmount >= maxFloat) {
-        console.log("Hitting error case");
         document.getElementById("placeBetBtn").disabled = true;
         document.getElementById("errorMessage").innerHTML = "Bet exceeds account balance";
         document.getElementById("errorMessage").style.display = "block";
         document.getElementById("usdInput").style.border = "2px solid red";
 
     } else {
-        console.log("Hitting valid case");
         document.getElementById("placeBetBtn").disabled = false;
         document.getElementById("errorMessage").style.display = "none";
         document.getElementById("usdInput").style.border = "2px solid white";
@@ -136,7 +132,6 @@ slider.oninput = function() {
     for (var i = 0; i < awayDivs.length; i++) {
         if (i === offset) {
             awayDivs[i].style.display = "block";
-            console.log(awayDivs[i]);
         } else {
             awayDivs[i].style.display = "none";
 

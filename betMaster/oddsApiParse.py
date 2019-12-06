@@ -13,8 +13,6 @@ UNLIMITED_POSTGAME_KEY = "befcc0db-77b9-419a-838d-2b3666"
 
 def findUpcomingGames():
 
-    print("Checking for all games within the next week")
-
     response = requests.get(
         url="https://api.mysportsfeeds.com/v2.1/pull/nfl/2019-regular/games.json",
         params={
@@ -25,17 +23,17 @@ def findUpcomingGames():
         }
     )
     data = json.loads(response.content)
+    ## Check games for actions to be taken
     for game in data['games']:
-        print("Found a game")
         gameID = game['schedule']['id']
         if FootballGame.objects.filter(gameID=gameID, awayTeamSpread=999).exists():
-            print("Checking for spreads of this game")
+            ## Check spread for game
             if not getGameSpreads(gameID):
 
                 continue
             
             else:
-                print("Updating an existing game object")
+                ## Update an exisiting game object
                 game = FootballGame.objects.get(gameID=gameID)
                 homeSpread, awaySpread = getGameSpreads(gameID)
                 game.homeTeamSpread = homeSpread
@@ -43,9 +41,9 @@ def findUpcomingGames():
                 game.evenSpread = abs(homeSpread)
                 game.save()
 
+        ## New game, does not exist in DB, create new game object
         elif not FootballGame.objects.filter(gameID=gameID).exists():
 
-            print("Creating a new game object")
             dateText = game['schedule']['startTime']
             dateObj = dateutil.parser.parse(dateText)
             commenceTime = dateObj.timestamp()
@@ -55,12 +53,16 @@ def findUpcomingGames():
             awayTeam = TEAMSDICT[awayAbv]
 
             date, gameTime = formatTimeStamp(commenceTime)
+
+            ## API has some games with no spread when game far in advance, set these
+            ## game spreads to 999
             if not getGameSpreads(gameID):
                 
                 homeTeamSpread = 999
                 awayTeamSpread = 999
                 evenSpread = 999
 
+            ## Found game spreads, get game spreads
             else:
 
                 homeTeamSpread, awayTeamSpread = getGameSpreads(gameID)
@@ -101,10 +103,9 @@ def getGameSpreads(gameID):
             return False
         
 
-
+## Format timestamp to EST and readable date
 def formatTimeStamp(timestamp):
 
-    print(timestamp)
     estTimeStamp = timestamp - (60 * 60 * 5)
     dateObject = datetime.fromtimestamp(estTimeStamp)
 
@@ -115,56 +116,48 @@ def formatTimeStamp(timestamp):
     else:
         time = f'{dateObject.strftime("%H:%M")} AM'
     
-    print(f'Time: {time}')
-    print(f'Date: {date}')
     return (date, time)
 
-
+## Check to see if existing games in DB have completed
 def checkForCompletedGames():
 
     currentTimestamp = time.time()
     games = FootballGame.objects.filter(isComplete=False, commenceTime__lt=currentTimestamp)
     for game in games:
-        print("Checking for a completed game here")
-        print(game)
         for bet in PendingBet.objects.filter(gameID=game.gameID):
+            ## Found a game with pending bets
             ## Send bitcoin back to better
-            print(f'Found a pending bet that did not get matched. Sending {bet.amount} btc to {bet.betterAddress}')
             sendBtcToBetter(bet.betterAddress, bet.amount)
-            print('Sent btc back, now deleting pending bet object from DB')
             bet.delete()
         if game.commenceTime < currentTimestamp - (60 * 4):
-            print("Found a game that started more than 4 hours ago...updating game object to complete")
+            ## Update game status to complete if game started more than 4 hours ago
             game.isComplete = True
             game.isLive = False
             game.save()
         else:
-            print("Found a game that is currently in progress...updating game object to live")
+            ## Game is currently in progress
             game.isLive = True
             game.save()
 
+## Payout bets
 def payoutCompletedGames():
 
-    print("Checking for completed games that have not been paid out yet")
     completedGames = FootballGame.objects.filter(isComplete=True, isPaidOut=False)
     for game in completedGames:
-        print(f'Game that is complete and not paid out: {game}')
+        ## Found game that is complete and not yet paid out
         betsOnGame = MatchedBet.objects.filter(paidOut=False, gameID=game.gameID)
         try:
-            print("Getting game data")
+            ## Get game data
             gameData = checkCompletedGameData(game.gameID)
         except:
-            print("API sucks, getting game data failed...waiting for update")
+            ## API not always reliable
             continue
         if gameData['game']['playedStatus'] == "COMPLETED":
-            print(f'Found {game} to be a completed game that has not been paid out')
-            print("Checking for matched bets on this game")
+            ## Check for matched bets on this game
             if len(betsOnGame) > 0:
-                print("Found at least 1 matched bet on this game")
                 for bet in betsOnGame:
                     
-                    print(f'In a matched bet for {game}')
-                    print("Updating game object to input the score")
+                    ## Update score of game in DB
                     homeTeamScore = gameData['scoring']['homeScoreTotal']
                     awayTeamScore = gameData['scoring']['awayScoreTotal']
                     game.homeTeamScore = homeTeamScore
@@ -172,21 +165,18 @@ def payoutCompletedGames():
                     game.save()
 
                     winner = determineBetWinner(bet, homeTeamScore, awayTeamScore)
-                    print(f'Found winner of {bet} to be {winner}')
                     
+                    ## There is a push, send bitcoin back
                     if winner is None:
-                        print("Tie, sending bitcoin back")
                         sendBtcToBetter(bet.better1Address, bet.amount)
                         sendBtcToBetter(bet.better2Address, bet.amount)
+                    ## Send bitcoin to winner
                     else:
-                        print("SENDING BITCOIN TO WINNER")
-                        print(f'SENDING {bet.payOutAmount} TO {winner}')
                         sendBtcToBetter(winner, bet.payOutAmount)
 
                     createCompletedBets(winner, bet, game)
 
                     bet.delete()
-            print("Game has been paid out, update game object to paid out")
             game.isPaidOut = True
             game.save()
 

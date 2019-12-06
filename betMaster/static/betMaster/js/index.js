@@ -1,5 +1,4 @@
 function initPage(encodedImg, btcPrice, btcBalance) {
-    console.log("From js script");
     var formattedString = encodedImg.replace(/&quot;/g, "");
     var imgSrc = 'data:image/png;base64,' + formattedString;
     var maxUSDWithdraw = (parseFloat(btcBalance) * parseFloat(btcPrice) - 1).toFixed(2);
@@ -50,7 +49,6 @@ function showUpcoming() {
 }
 
 function showWithdrawDiv() {
-    console.log("Show withdraw div function");
     var divsToHide = document.getElementsByClassName("accountInfo");
     for (var i = 0; i < divsToHide.length; i++) {
         divsToHide[i].style.display = "none";
@@ -58,14 +56,7 @@ function showWithdrawDiv() {
     document.getElementById("withdrawDiv").style.display = "block";
 }
 
-function withdrawalRequest() {
-
-    console.log("Withdrawal Function");
-
-}
-
 function showAccountInfo() {
-    console.log("Showing account info function");
     var divsToShow = document.getElementsByClassName("accountInfo");
     for (var i = 0; i < divsToShow.length; i++) {
         divsToShow[i].style.display = "initial";
@@ -86,7 +77,6 @@ function convertToBtc(rate) {
     maxBet = parseFloat(maxBet.slice(17));
     
     if (usdAmount > maxBet) {
-        console.log("Betting too much");
         document.getElementById("makeWithdrawBtn").disabled = true;
         document.getElementById("errorMessage").style.display = "block";
         document.getElementById("errorMessage").innerHTML = "Withdrawal Amount Exceeds Account Balance";
@@ -98,23 +88,5 @@ function convertToBtc(rate) {
             document.getElementById("makeWithdrawBtn").disabled = false;
         }
     }
-    
-    // if (usdAmount >= maxFloat) {
-    //     console.log("Hitting error case");
-    //     document.getElementById("placeBetBtn").disabled = true;
-    //     document.getElementById("errorMessage").innerHTML = "Bet exceeds account balance";
-    //     document.getElementById("errorMessage").style.display = "block";
-    //     document.getElementById("usdInput").style.border = "2px solid red";
-
-    // } else {
-    //     console.log("Hitting valid case");
-    //     document.getElementById("placeBetBtn").disabled = false;
-    //     document.getElementById("errorMessage").style.display = "none";
-    //     document.getElementById("usdInput").style.border = "2px solid white";
-    // }
-    // document.getElementById("usdPayout").value = usdString;
-    // document.getElementById("btcPayout").value = btcPayout;
-
-    
 
 }
